@@ -2,10 +2,8 @@ version: '3'
 services:
   logic:
     build: .
-    ports:
-      - "2000:2000"
   api_service:
-    build: ./src/frcm/API
+    build: /fireguard_api
     ports:
       - "8000:8000"
     tty: true
