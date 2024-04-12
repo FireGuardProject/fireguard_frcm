@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "fireguard"
+version = "0.1.0"
+description = ""
+authors = ["Håkon, Viktor, Andreas and Maksim"]
+readme = "README.md"
+packages = [{include = "frcm", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.31.0"
+pydantic = "^2.6.1"
+python-dateutil = "^2.8.2"
+numpy = "^1.26.3"
+python-decouple = "^3.8"
+fastapi = "^0.109.2"
+uvicorn = "^0.27.1"
+google-cloud-firestore = "^2.15.0"
+oauth2 = "^1.9.0.post1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.9"
+bcrypt = "^4.1.2"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.0.0"
+ruff = "^0.1.15"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
