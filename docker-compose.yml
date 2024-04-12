@@ -3,7 +3,7 @@ services:
   logic:
     build: .
   api_service:
-    build: /fireguard_api
+    build: ../fireguard_api
     ports:
       - "8000:8000"
     tty: true
