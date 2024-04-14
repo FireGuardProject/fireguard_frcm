@@ -6,8 +6,6 @@ WORKDIR /app
 
 # Copy the project files into the container at /app
 COPY . .
-#COPY src/ ./src
-#COPY pyproject.toml poetry.lock README.md ./
 
 # Install pipx and Poetry globally
 RUN pip install pipx \
@@ -15,7 +13,6 @@ RUN pip install pipx \
 
 # Use Poetry to install the dependencies
 RUN /root/.local/bin/poetry install 
-#--no-dev
 
 # Expose the port the app runs on
 EXPOSE 2000
@@ -25,4 +22,3 @@ ENV MET_CLIENT_SECRET='80fa55ba-20d6-475c-bcdc-94f5501609d'
 
 # Command to run on container start, adjust the module path as needed
 CMD ["/root/.local/bin/poetry", "run", "uvicorn", "src.frcm.logic.bus_logic:app", "--host", "0.0.0.0", "--port", "2000"]
-#CMD ["/root/.local/bin/poetry", "run", "pytest"]
