@@ -31,7 +31,6 @@ jobs:
         poetry install --with test
     - name: Test with pytest
       env:
-        FIREBASE_CREDENTIALS_BASE64: ${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}
         MET_CLIENT_ID: ${{ secrets.MET_CLIENT_ID }}
         MET_CLIENT_SECRET: ${{ secrets.MET_CLIENT_SECRET }}
       run: |
