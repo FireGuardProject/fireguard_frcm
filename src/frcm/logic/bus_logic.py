@@ -8,7 +8,7 @@ from frcm.data_harvesting.client import WeatherDataClient
 import frcm.FRC_service.compute
 from frcm.data_harvesting.client_met import METClient
 from frcm.data_harvesting.extractor_met import METExtractor
-from database.firestore import save_data_to_db, get_date_weatherdata
+from frcm.database.firestore import save_data_to_db, get_date_weatherdata
 
 class FireRiskAPI:
 

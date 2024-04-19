@@ -15,7 +15,8 @@ numpy = "^1.26.3"
 python-decouple = "^3.8"
 fastapi = "^0.109.2"
 uvicorn = "^0.27.1"
-google-cloud-firestore = "^2.15.0"
+google-cloud-firestore = "^2.16.0"
+google-auth = "^2.29.0"
 oauth2 = "^1.9.0.post1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
