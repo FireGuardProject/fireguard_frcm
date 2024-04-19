@@ -8,7 +8,7 @@ from frcm.data_harvesting.client import WeatherDataClient
 import frcm.FRC_service.compute
 from frcm.data_harvesting.client_met import METClient
 from frcm.data_harvesting.extractor_met import METExtractor
-
+from database.firestore import save_data_to_db, get_date_weatherdata
 
 class FireRiskAPI:
 
@@ -21,56 +21,55 @@ class FireRiskAPI:
     def compute(self, wd: WeatherData) -> FireRiskPrediction:
         return frcm.FRC_service.compute.compute(wd)
     
+    def fetch_and_compute(self, location, start, end, manage_db=False):
+        """Fetch observations and forecast, create WeatherData, and compute prediction."""
+        time_now = datetime.now()
+        formatted_start_time = start.strftime('%d-%m-%Y')
+        formatted_time_now = end.strftime('%d-%m-%Y')
+        date_range = f'{formatted_start_time} - {formatted_time_now}'
 
-    def compute_previous_days(self, location: Location, delta: timedelta) -> FireRiskPrediction: 
+        if manage_db:
+            observations = self.manage_observations(location, date_range, start, end)
+        else:
+            observations = self.client.fetch_observations(location, start=start, end=end)
+
+        forecast = self.client.fetch_forecast(location, start, end)
+        wd = WeatherData(created=time_now, observations=observations, forecast=forecast)
+        return self.compute(wd)
+    
+    def manage_observations(self, location, date_range, start, end):
+        """Manage fetching or retrieving observations from database or API."""
+        db_observations = get_date_weatherdata(date_range)
+        if db_observations:
+            print("Using data retrieved from the database.")
+            return db_observations
+        else:
+            observations = self.client.fetch_observations(location, start=start, end=end)
+            save_data_to_db(observations.location, date_range, observations.data, observations.source)
+            print("No existing data found. Fetched new data and saved to database.")
+            return observations
+        
+    def compute_previous_days(self, location: Location, delta: timedelta):
         time_now = datetime.now()
         start_time = time_now - delta
+        return self.fetch_and_compute(location, start_time, time_now, manage_db=True)
 
-        # request to: dataharvesting microservice
-        observations = self.client.fetch_observations(location, start=start_time, end=time_now)
-        forecast = self.client.fetch_forecast(location, start_time, time_now)
-        wd = WeatherData(created=time_now, observations=observations, forecast=forecast)
-        prediction = self.compute(wd)
-        return prediction 
-
-    def compute_upcoming_days(self, location: Location, delta: timedelta) -> FireRiskPrediction: 
+    def compute_upcoming_days(self, location: Location, delta: timedelta):
         time_now = datetime.now()
         end_time = time_now + delta
-        observations = self.client.fetch_observations(location, start=time_now, end=end_time)
-        forecast = self.client.fetch_forecast(location, time_now, end_time)
-        wd = WeatherData(created=time_now, observations=observations, forecast=forecast)
-        prediction = self.compute(wd)
-        return prediction
+        return self.fetch_and_compute(location, time_now, end_time)
 
-    def compute_specific_period(self, location: Location, start: datetime, end: datetime) -> FireRiskPrediction:
-        time_now = datetime.now()
-        #databaselogic 
-      
-        observations = self.client.fetch_observations(location, start=start, end=end)
-        forecast = self.client.fetch_forecast(location, start, end)
-        wd = WeatherData(created=time_now, observations=observations, forecast=forecast)
-        
-        prediction = self.compute(wd)
-        return prediction 
+    def compute_specific_period(self, location: Location, start: datetime, end: datetime):
+        return self.fetch_and_compute(location, start, end)
 
-    def compute_after_start_date(self, location: Location, start: datetime, delta: timedelta) -> FireRiskPrediction:
-        time_now = datetime.now()
+    def compute_after_start_date(self, location: Location, start: datetime, delta: timedelta):
         end = start + delta
-        observations = self.client.fetch_observations(location, start=start, end=end)
-        forecast = self.client.fetch_forecast(location, start, end)
-        wd = WeatherData(created=time_now, observations=observations, forecast=forecast)
-        prediction = self.compute(wd)
-        return prediction
+        return self.fetch_and_compute(location, start, end)
 
-    def compute_before_end_date(self, location: Location, end: datetime, delta: timedelta) -> FireRiskPrediction:
-        time_now = datetime.now()
+    def compute_before_end_date(self, location: Location, end: datetime, delta: timedelta):
         start = end - delta
-        observations = self.client.fetch_observations(location, start=start, end=end)
-        forecast = self.client.fetch_forecast(location, start, end)
-        wd = WeatherData(created=time_now, observations=observations, forecast=forecast)
-        prediction = self.compute(wd)
-        return prediction
-    
+        return self.fetch_and_compute(location, start, end)
+
 
 met_extractor = METExtractor()
 # TODO: maybe embed extractor into client
