@@ -20,15 +20,16 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-    - name: Extract tags and labels for Docker
+    - name: Extract tags and labels for Docker image
       id: meta
       uses: docker/metadata-action@v4
       with:
         images: haakonm/fireguard-frcm
         tags: |
           type=ref,event=tag
-          type=sha,prefix=commit-
-  
+          type=semver,pattern={{version}}
+          type=raw,value=latest
+
     - name: Build and push Docker Image
       uses: docker/build-push-action@v5
       with:
