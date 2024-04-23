@@ -46,7 +46,7 @@ class FireRiskAPI:
         else:
             observations = self.client.fetch_observations(location, start=start, end=end)
             save_data_to_db(observations.location, date_range, observations.data, observations.source)
-            print("No existing data found. Fetched new data and saved to database.")
+            print("No existing data found. Fetching new data from FROST")
             return observations
         
     def compute_previous_days(self, location: Location, delta: timedelta):
