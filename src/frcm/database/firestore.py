@@ -11,13 +11,13 @@ from frcm.datamodel.model import WeatherDataPoint, Location, WeatherData, Observ
 def get_firestore_client():
     try:
         # Decode the base64-encoded credentials
-        
-        print("Credentials:")
-        print(config('FIREBASE_CREDENTIALS_BASE64'))
-        credentials_json = base64.b64decode(config('FIREBASE_CREDENTIALS_BASE64'))
+
+        #print("Credentials:")
+        #print(config('FIREBASE_CREDENTIALS_BASE64'))
+        #credentials_json = base64.b64decode(config('FIREBASE_CREDENTIALS_BASE64'))
         
         # Load the credentials from the decoded JSON string
-        credentials = service_account.Credentials.from_service_account_info(json.loads(credentials_json))
+        credentials = service_account.Credentials.from_service_account_info(json.loads(config('FIREBASE_CREDENTIALS_BASE64')))
         
         # Use the credentials to initialize the Firestore client
         return firestore.Client(credentials=credentials, project=credentials.project_id)
