@@ -11,6 +11,7 @@ from frcm.datamodel.model import WeatherDataPoint, Location, WeatherData, Observ
 def get_firestore_client():
     try:
         # Decode the base64-encoded credentials
+        
         print("Credentials:")
         print(config('FIREBASE_CREDENTIALS_BASE64'))
         credentials_json = base64.b64decode(config('FIREBASE_CREDENTIALS_BASE64'))
